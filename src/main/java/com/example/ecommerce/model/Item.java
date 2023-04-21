@@ -27,6 +27,10 @@ public class Item {
     @JoinColumn
     Cart cart;
 
+    @OneToOne
+    @JoinColumn
+    Product product;
+
     @ManyToOne
     @JoinColumn
     Ordered order;

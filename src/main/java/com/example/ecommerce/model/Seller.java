@@ -1,10 +1,7 @@
 package com.example.ecommerce.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.ArrayList;
@@ -16,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name="seller")
 @FieldDefaults(level= AccessLevel.PRIVATE)
+@Builder
 public class Seller {
 
     @Id
@@ -24,6 +22,7 @@ public class Seller {
 
     String name;
 
+    @Column(unique = true)
     String emailId;
 
     Integer age;

@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="order")
+@Table(name="ordered")
 @FieldDefaults(level= AccessLevel.PRIVATE)
 public class Ordered {
 

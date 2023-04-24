@@ -55,4 +55,16 @@ public class ProductService {
 
         return productResponseDtos;
     }
+
+    public List<ProductResponseDto> getAllProductsByPriceAndCategory(int price, String category){
+
+        List<Product> products = productRepository.getAllProductsByPriceAndCategory(price,category);
+
+        List<ProductResponseDto> productResponseDtos = new ArrayList<>();
+        for(Product product: products){
+            productResponseDtos.add(ProductTransformer.ProductToProductResponseDto(product));
+        }
+
+        return productResponseDtos;
+    }
 }

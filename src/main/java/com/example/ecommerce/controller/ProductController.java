@@ -29,6 +29,14 @@ public class ProductController {
         return productService.getAllProductsByCategory(category);
     }
 
+    @GetMapping("/get/{price}/{category}")
+    public List<ProductResponseDto> getAllProductsByPriceAndCategory(
+            @PathVariable("price") int price,
+            @PathVariable("category") String productCategory){
+
+        return productService.getAllProductsByPriceAndCategory(price, productCategory);
+    }
+
     // Get all product by seller email id
 
     // delete a product by seller id and product id

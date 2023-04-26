@@ -30,6 +30,8 @@ public class CustomerService {
                 .build();
         customer.setCart(cart);
 
+
+
         Customer savedCustomer = customerRepository.save(customer);  // customer and cart
 
         // prepare response dto

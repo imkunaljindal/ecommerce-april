@@ -7,4 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Repository
 public interface CardRespository extends JpaRepository<Card,Integer> {
+
+    Card findByCardNo(String cardNo);
 }

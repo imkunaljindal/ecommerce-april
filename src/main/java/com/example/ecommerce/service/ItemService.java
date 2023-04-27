@@ -54,11 +54,6 @@ public class ItemService {
         item.setProduct(product);
 
         product.getItemList().add(item);
-       // Product savedProduct = productRepository.save(product);
-
-        // Think - only saving child will also work here ?????????
-
-//        int size = product.getItemList().size();
         return itemRepository.save(item);
     }
 }

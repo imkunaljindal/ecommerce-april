@@ -49,9 +49,7 @@ public class CartService {
 
         int newTotal = cart.getCartTotal() + item.getRequiredQuantity()*item.getProduct().getPrice();
         cart.setCartTotal(newTotal);
-        System.out.println(cart.getItems().size());
         cart.getItems().add(item);
-        System.out.println(cart.getItems().size());
 
         cart.setNumberOfItems(cart.getItems().size());
         Cart savedCart = cartRepository.save(cart);
@@ -93,17 +91,21 @@ public class CartService {
             throw new InvalidCardException("Your card is not valid!!");
         }
 
-        Cart cart = customer.getCart();
+       Cart cart = customer.getCart();
         if(cart.getNumberOfItems()==0){
             throw new Exception("Cart is empty!!");
         }
 
         try{
            Ordered order = orderService.placeOrder(customer,card);  // throw exception if product goes out of stock
-           customer.getOrderList().add(order);
-           Ordered savedOrder = orderedRepository.save(order);
-           resetCart(cart);
-//           customerRepository.save(customer);
+            customer.getOrderList().add(order);
+            cart.setCartTotal(0);
+            cart.setNumberOfItems(0);
+            cart.setItems(new ArrayList<>());
+          //  customerRepository.save(customer);
+            Ordered savedOrder = orderedRepository.save(order);
+
+
 
            //prepare response dto
             // prepare response dto
@@ -131,12 +133,5 @@ public class CartService {
         catch (Exception e){
             throw new Exception(e.getMessage());
         }
-    }
-
-    public void resetCart(Cart cart){
-
-        cart.setCartTotal(0);
-        cart.setNumberOfItems(0);
-        cart.setItems(new ArrayList<>());
     }
 }

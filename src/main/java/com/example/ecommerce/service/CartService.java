@@ -32,10 +32,6 @@ public class CartService {
     CartRepository cartRepository;
 
     @Autowired OrderService orderService;
-
-    @Autowired
-    ProductService productService;
-
     @Autowired
     OrderedRepository orderedRepository;
 
@@ -50,8 +46,8 @@ public class CartService {
         int newTotal = cart.getCartTotal() + item.getRequiredQuantity()*item.getProduct().getPrice();
         cart.setCartTotal(newTotal);
         cart.getItems().add(item);
-
         cart.setNumberOfItems(cart.getItems().size());
+        item.setCart(cart);
         Cart savedCart = cartRepository.save(cart);
 
         CartResponseDto cartResponseDto = CartResponseDto.builder()
@@ -62,13 +58,7 @@ public class CartService {
 
         List<ItemResponseDto> itemResponseDtoList = new ArrayList<>();
         for(Item itemEntity: savedCart.getItems()){
-
-            ItemResponseDto itemResponseDto = new ItemResponseDto();
-            itemResponseDto.setPriceOfOneItem(itemEntity.getProduct().getPrice());
-            itemResponseDto.setTotalPrice(itemEntity.getRequiredQuantity()*itemEntity.getProduct().getPrice());
-            itemResponseDto.setProductName(itemEntity.getProduct().getName());
-            itemResponseDto.setQuantity(itemEntity.getRequiredQuantity());
-
+            ItemResponseDto itemResponseDto = ItemTransformer.ItemToItemResponseDto(itemEntity);
             itemResponseDtoList.add(itemResponseDto);
         }
 
@@ -97,17 +87,11 @@ public class CartService {
         }
 
         try{
-           Ordered order = orderService.placeOrder(customer,card);  // throw exception if product goes out of stock
+            Ordered order = orderService.placeOrder(customer,card);  // throw exception if product goes out of stock
             customer.getOrderList().add(order);
-            cart.setCartTotal(0);
-            cart.setNumberOfItems(0);
-            cart.setItems(new ArrayList<>());
-          //  customerRepository.save(customer);
+            resetCart(cart);
             Ordered savedOrder = orderedRepository.save(order);
 
-
-
-           //prepare response dto
             // prepare response dto
             OrderResponseDto orderResponseDto = new OrderResponseDto();
             orderResponseDto.setOrderDate(savedOrder.getOrderDate());
@@ -118,20 +102,25 @@ public class CartService {
 
             List<ItemResponseDto> items = new ArrayList<>();
             for(Item itemEntity: savedOrder.getItems()){
-                ItemResponseDto itemResponseDto = new ItemResponseDto();
-                itemResponseDto.setPriceOfOneItem(itemEntity.getProduct().getPrice());
-                itemResponseDto.setTotalPrice(itemEntity.getRequiredQuantity()*itemEntity.getProduct().getPrice());
-                itemResponseDto.setProductName(itemEntity.getProduct().getName());
-                itemResponseDto.setQuantity(itemEntity.getRequiredQuantity());
-
+               ItemResponseDto itemResponseDto = ItemTransformer.ItemToItemResponseDto(itemEntity);
                 items.add(itemResponseDto);
             }
-
             orderResponseDto.setItems(items);
             return orderResponseDto;
         }
         catch (Exception e){
             throw new Exception(e.getMessage());
         }
+    }
+
+    public void resetCart(Cart cart){
+
+        cart.setCartTotal(0);
+        for(Item item: cart.getItems()){
+            item.setCart(null);
+        }
+        cart.setNumberOfItems(0);
+        cart.getItems().clear();
+
     }
 }
